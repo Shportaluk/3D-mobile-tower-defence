@@ -24,35 +24,40 @@ public class TowersSystem : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
     }
 
-    private List<GameObject> targetsInRange = new List<GameObject>();
+    private List<EnemySystem> targetsInRange = new List<EnemySystem>();
 
-    public void DeleteTarget(int instaceId)
+    public void DeleteTargetByInstaceId(int instaceId)
     {
-        //Debug.Log(instaceId + "-");
         for (int i = 0; i < targetsInRange.Count; i++)
         {
             if (targetsInRange[i].GetInstanceID() == instaceId)
             {
-                Destroy(targetsInRange[i]);
-                targetsInRange.RemoveAt(i);
+                DeleteTargetById(i);
+                //Destroy(targetsInRange[i]);
                 return;
             }
         }
     }
+    private void DeleteTargetById(int id)
+    {
+        //Debug.Log(id + " " + targetsInRange.Count);
+        targetsInRange.RemoveAt(id);
+    }
+    
     public void AddTargetToSystem(GameObject targetGO)
     {
-        targetsInRange.Add(targetGO);
+        targetsInRange.Add(targetGO.GetComponent<EnemySystem>());
     }
 
     public void OnTriggerEnter(Collider other)
     {
-        Debug.Log("enter" + other.name);
+        //Debug.Log("enter" + other.name);
         AddTargetToSystem(other.gameObject);
     }
     public void OnTriggerExit(Collider other)
     {
-        Debug.Log("exit" + other.name);
-        DeleteTarget(other.gameObject.GetInstanceID());
+        //Debug.Log("exit" + other.name);
+        DeleteTargetByInstaceId(other.gameObject.GetInstanceID());
     }
 
     void RotateTo(Vector3 target)
@@ -71,27 +76,31 @@ public class TowersSystem : MonoBehaviour
         }
         transformRotateElem.rotation = Quaternion.Slerp(transformRotateElem.rotation, targetDir, speedRotation * Time.deltaTime);
     }
-    void Shoot()
+    void Shoot(EnemySystem target)
     {
         if (Time.time >= _nextTimeToShoot && _isRotatedToTarget)
         {
             _nextTimeToShoot = Time.time + shootInterval;
-            Debug.Log("Shoot");
             _audioSource.PlayOneShot(audioClipShoot);
+            target.DamageMe(this, damage);
         }
     }
-    GameObject GetTarget()
+    EnemySystem GetTarget()
     {
         if (targetsInRange.Count == 0)
             return null;
 
         float[] distanceEnemyToCastle = new float[targetsInRange.Count];
-        //GameObject target;
         float minDistance = 999999999f;
         float distance;
         int t = 0;
         for (int i = 0; i < targetsInRange.Count; i++)
         {
+            if( targetsInRange[i] == null )
+            {
+                DeleteTargetById(i);
+                return null;
+            }
             distance = Vector3.Distance(_castlePos, targetsInRange[i].transform.position);
             if (distance < minDistance)
             {
@@ -104,11 +113,11 @@ public class TowersSystem : MonoBehaviour
     }
     void Update()
     {
-        GameObject target = GetTarget();
+        EnemySystem target = GetTarget();
         if(target != null)
         {
             RotateTo(target.transform.position);
-            Shoot();
+            Shoot(target);
         }
     }
 }

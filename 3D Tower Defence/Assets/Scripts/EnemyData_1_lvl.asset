@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: EnemyData_1_lvl
   m_EditorClassIdentifier: 
   MoveSpeed: 2
-  Health: 50
+  Health: 30
   EnemyDamage: 10
