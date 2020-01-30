@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class EnemySystem : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public EnemyData enemyData;
     void Start()
     {
-        
+        Debug.Log(enemyData.MoveSpeed);
     }
 
-    // Update is called once per frame
     void Update()
     {
         

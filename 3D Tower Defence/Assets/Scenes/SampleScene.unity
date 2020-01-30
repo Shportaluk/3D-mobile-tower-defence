@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b3858b16c945db4990392e0c3b0161f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyData: {fileID: 0}
 --- !u!54 &300262994
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -397,6 +398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b3858b16c945db4990392e0c3b0161f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyData: {fileID: 0}
 --- !u!54 &852024589
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -768,6 +770,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b3858b16c945db4990392e0c3b0161f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyData: {fileID: 11400000, guid: 4b0b1628ac8873743969903e6b29e7d5, type: 2}
 --- !u!54 &1641443169
 Rigidbody:
   m_ObjectHideFlags: 0

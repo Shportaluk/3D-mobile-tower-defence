@@ -97,7 +97,6 @@ public class TowersSystem : MonoBehaviour
             {
                 t = i;
                 minDistance = distance;
-                //target = targetsInRange[i];
             }
         }
 
