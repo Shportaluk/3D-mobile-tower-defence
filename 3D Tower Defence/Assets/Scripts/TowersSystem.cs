@@ -13,12 +13,14 @@ public class TowersSystem : MonoBehaviour
     private float _nextTimeToShoot = 0;
     public AudioClip audioClipShoot;
     private AudioSource _audioSource;
+    private bool _isRotatedToTarget = false;
 
     public Transform transformRotateElem;
-
+    private Vector3 _castlePos;
 
     void Start()
     {
+        _castlePos = GameObject.Find("Castle").transform.position;
         _audioSource = GetComponent<AudioSource>();
     }
 
@@ -42,7 +44,6 @@ public class TowersSystem : MonoBehaviour
         targetsInRange.Add(targetGO);
     }
 
-
     public void OnTriggerEnter(Collider other)
     {
         Debug.Log("enter" + other.name);
@@ -56,25 +57,58 @@ public class TowersSystem : MonoBehaviour
 
     void RotateTo(Vector3 target)
     {
-        target.y = transform.position.y; //set targetPos y equal to mine, so I only look at my own plane
+        target.y = transform.position.y;
         var targetDir = Quaternion.LookRotation(target - transform.position);
+        float angle = Vector3.Angle(target - transformRotateElem.position, transformRotateElem.forward);
+        //Debug.Log(angle);
+        if(angle < 20)
+        {
+            _isRotatedToTarget = true;
+        }
+        else
+        {
+            _isRotatedToTarget = false;
+        }
         transformRotateElem.rotation = Quaternion.Slerp(transformRotateElem.rotation, targetDir, speedRotation * Time.deltaTime);
     }
     void Shoot()
     {
-        if (Time.time >= _nextTimeToShoot)
+        if (Time.time >= _nextTimeToShoot && _isRotatedToTarget)
         {
             _nextTimeToShoot = Time.time + shootInterval;
             Debug.Log("Shoot");
             _audioSource.PlayOneShot(audioClipShoot);
         }
     }
+    GameObject GetTarget()
+    {
+        if (targetsInRange.Count == 0)
+            return null;
 
+        float[] distanceEnemyToCastle = new float[targetsInRange.Count];
+        //GameObject target;
+        float minDistance = 999999999f;
+        float distance;
+        int t = 0;
+        for (int i = 0; i < targetsInRange.Count; i++)
+        {
+            distance = Vector3.Distance(_castlePos, targetsInRange[i].transform.position);
+            if (distance < minDistance)
+            {
+                t = i;
+                minDistance = distance;
+                //target = targetsInRange[i];
+            }
+        }
+
+        return targetsInRange[t];
+    }
     void Update()
     {
-        if(targetsInRange.Count > 0)
+        GameObject target = GetTarget();
+        if(target != null)
         {
-            RotateTo(targetsInRange[0].transform.position);
+            RotateTo(target.transform.position);
             Shoot();
         }
     }
